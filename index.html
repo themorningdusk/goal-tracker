@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Goal Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f0f0f0;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .progress-container {
+      background-color: #ddd;
+      border-radius: 30px;
+      overflow: hidden;
+      height: 30px;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: #4caf50;
+      width: 1%;
+      text-align: center;
+      color: white;
+      line-height: 30px;
+      transition: width 0.5s ease;
+    }
+
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .details {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .label {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Goal Tracker: ₹1,00,000 by Sept 21, 2025</h2>
+
+  <div class="label">Today's Date:</div>
+  <div id="todayDate"></div>
+
+  <div class="label">Enter how much you've earned so far (₹):</div>
+  <input type="number" id="earnedInput" placeholder="e.g. 30000">
+  <button onclick="updateProgress()">Update Progress</button>
+
+  <div class="label">Progress:</div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar">0%</div>
+  </div>
+
+  <div class="details" id="details"></div>
+
+  <script>
+    function updateProgress() {
+      const earned = parseFloat(document.getElementById("earnedInput").value);
+      const goal = 100000;
+      const percent = Math.min((earned / goal) * 100, 100).toFixed(2);
+
+      const bar = document.getElementById("progressBar");
+      bar.style.width = percent + "%";
+      bar.textContent = percent + "%";
+
+      const today = new Date();
+      const startDate = new Date("2025-06-23");
+      const endDate = new Date("2025-09-21");
+
+      const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      const daysPassed = Math.ceil((today - startDate) / (1000 * 60 * 60 * 24));
+      const expectedPercent = Math.min((daysPassed / totalDays) * 100, 100).toFixed(2);
+
+      document.getElementById("details").innerHTML = `
+        You've earned ₹${earned} out of ₹1,00,000.<br>
+        Days passed: ${daysPassed} / ${totalDays} days (${expectedPercent}% time passed)<br>
+        You should ideally be at ₹${Math.round((expectedPercent / 100) * goal)} by today.<br>
+        <strong>${earned >= ((expectedPercent / 100) * goal) ? "✅ You're on track!" : "⚠️ You're behind. Try to catch up!"}</strong>
+      `;
+
+      // Set today's date
+      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById("todayDate").textContent = today.toLocaleDateString('en-IN', dateOptions);
+    }
+
+    // Set today's date on load
+    window.onload = updateProgress;
+  </script>
+
+</body>
+</html>
