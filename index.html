@@ -67,7 +67,7 @@
 
   <script>
     function updateProgress() {
-      const earned = parseFloat(document.getElementById("earnedInput").value);
+      const earned = parseFloat(document.getElementById("earnedInput").value) || 0;
       const goal = 100000;
       const percent = Math.min((earned / goal) * 100, 100).toFixed(2);
 
@@ -90,13 +90,25 @@
         <strong>${earned >= ((expectedPercent / 100) * goal) ? "✅ You're on track!" : "⚠️ You're behind. Try to catch up!"}</strong>
       `;
 
-      // Set today's date
-      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-      document.getElementById("todayDate").textContent = today.toLocaleDateString('en-IN', dateOptions);
+      // Save to localStorage for today
+      const todayKey = today.toISOString().split("T")[0]; // YYYY-MM-DD
+      localStorage.setItem("earning-" + todayKey, earned);
     }
 
-    // Set today's date on load
-    window.onload = updateProgress;
+    window.onload = () => {
+      const today = new Date();
+      const todayKey = today.toISOString().split("T")[0]; // YYYY-MM-DD
+
+      const saved = localStorage.getItem("earning-" + todayKey);
+      if (saved) {
+        document.getElementById("earnedInput").value = saved;
+      }
+
+      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById("todayDate").textContent = today.toLocaleDateString('en-IN', dateOptions);
+
+      updateProgress();
+    };
   </script>
 
 </body>
